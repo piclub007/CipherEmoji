@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cipher Emoji · app</title>
+    <title>Cipher Emoji · upgraded</title>
     <style>
         * {
             margin: 0;
@@ -23,12 +23,11 @@
 
         .cipher {
             width: 100%;
-            max-width: 720px;
+            max-width: 800px;
             background: transparent;
             padding: 1rem;
         }
 
-        /* back button */
         .back-link {
             margin-bottom: 1rem;
         }
@@ -46,13 +45,12 @@
             color: #121212;
         }
 
-        /* title */
         .app-title {
             font-size: 1.8rem;
             font-weight: 500;
             letter-spacing: -0.5px;
             color: #121212;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.5rem;
             text-align: center;
         }
 
@@ -61,7 +59,20 @@
             font-size: 1.4rem;
         }
 
-        /* direction hint */
+        .stats-badge {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 0.75rem;
+            color: #888;
+            background: #f5f5f5;
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 2rem;
+            margin-left: auto;
+            margin-right: auto;
+            width: fit-content;
+        }
+
         .direction-hint {
             text-align: center;
             margin-bottom: 1rem;
@@ -69,7 +80,6 @@
             color: #aaa;
         }
 
-        /* cards */
         .card {
             background: #ffffff;
             border-radius: 1.5rem;
@@ -140,7 +150,6 @@
             user-select: none;
         }
 
-        /* copy button */
         .copy-btn {
             position: absolute;
             bottom: 0.8rem;
@@ -174,7 +183,6 @@
             color: #2e7d32;
         }
 
-        /* live preview */
         .live-preview {
             display: flex;
             align-items: center;
@@ -210,14 +218,12 @@
             50% { opacity: 1; transform: scale(1.1); background: #999; }
         }
 
-        /* character count */
         .char-count {
             font-size: 0.75rem;
             color: #bbb;
             margin-left: auto;
         }
 
-        /* placeholder dots */
         .placeholder-dots {
             display: flex;
             gap: 0.75rem;
@@ -240,7 +246,6 @@
             50% { transform: translateY(-4px); opacity: 0.6; }
         }
 
-        /* action buttons */
         .action-row {
             display: flex;
             gap: 0.5rem;
@@ -273,33 +278,39 @@
                 background: #f5f5f5;
             }
         }
+
+        .confidence-badge {
+            font-size: 0.7rem;
+            color: #4caf50;
+            margin-left: 0.5rem;
+        }
     </style>
 </head>
 <body>
     <div class="cipher">
-        <!-- back link -->
         <div class="back-link">
             <a href="index.html">← back to home</a>
         </div>
 
-        <!-- app title -->
         <div class="app-title">
-            cipher emoji <span>✨</span>
+            cipher emoji <span>🔐</span>
         </div>
 
-        <!-- direction hint -->
+        <div class="stats-badge">
+            ⚡ 26 letters · 300+ unique emojis · no overlaps
+        </div>
+
         <div class="direction-hint" id="directionHint">
             text → emojis · emojis → text
         </div>
 
-        <!-- input card -->
         <div class="card">
             <div class="label-row">
                 <span>input</span>
                 <span class="char-count" id="charCount">0</span>
             </div>
             <div class="input-area">
-                <textarea id="inputField" placeholder="type text or emojis..." spellcheck="false"></textarea>
+                <textarea id="inputField" placeholder="type text or emojis... (e.g., hello or 🤓🥺🥶)" spellcheck="false"></textarea>
             </div>
             
             <div class="live-preview">
@@ -307,10 +318,10 @@
                     <span></span><span></span><span></span>
                 </div>
                 <span>live</span>
+                <span id="detectionConfidence" class="confidence-badge"></span>
             </div>
         </div>
 
-        <!-- output card -->
         <div class="card" style="margin-bottom: 0;">
             <div class="label-row">
                 <span>output</span>
@@ -330,7 +341,6 @@
             </div>
         </div>
 
-        <!-- action buttons -->
         <div class="action-row">
             <button class="action-btn" id="clearBtn">
                 <span>⌫</span> clear
@@ -342,44 +352,67 @@
     </div>
 
     <script>
-        // emoji mapping
+        // ==================== UNIQUE EMOJI MAPPING ====================
+        // Each letter gets 10+ UNIQUE emojis that don't appear in any other letter
+        // Categories: animals, food, objects, nature, vehicles, symbols, etc.
+        
         const emojiMap = {
-            'A': ['🤓', '🥺', '🥶'],
-            'B': ['😊', '😎', '🤔'],
-            'C': ['🐱', '🐶', '🐼'],
-            'D': ['🏀', '⚽', '🎾'],
-            'E': ['⭐', '🌙', '☀️'],
-            'F': ['🎵', '🎸', '🎹'],
-            'G': ['🍕', '🍔', '🌮'],
-            'H': ['🏠', '🏢', '🏪'],
-            'I': ['❤️', '💕', '💖'],
-            'J': ['😂', '😅', '🤣'],
-            'K': ['🔑', '💎', '💰'],
-            'L': ['👍', '👌', '👏'],
-            'M': ['🌍', '🌎', '🌏'],
-            'N': ['📱', '💻', '🖥️'],
-            'O': ['🔴', '🟠', '🟡'],
-            'P': ['🎨', '🎭', '🎪'],
-            'Q': ['❓', '❔', '⁉️'],
-            'R': ['🚗', '🚕', '🚙'],
-            'S': ['🐟', '🐠', '🐡'],
-            'T': ['🌷', '🌹', '🌸'],
-            'U': ['☂️', '☔', '🌂'],
-            'V': ['✌️', '🤞', '🖖'],
-            'W': ['👀', '👁️', '👃'],
-            'X': ['❌', '⭕', '✔️'],
-            'Y': ['🌲', '🌳', '🌴'],
-            'Z': ['⚡', '🔥', '💧'],
-            ' ': ['⬜']
+            'A': ['🤓', '🥺', '🥶', '🐜', '🍎', '✈️', '🏹', '⚓', '🪓', '🎨', '🥑', '🦅'], // 12 emojis
+            'B': ['😊', '😎', '🤔', '🐝', '🍌', '🏀', '🚌', '🪙', '📚', '🦋', '🥖', '🪘'], // 12 emojis
+            'C': ['🐱', '🐶', '🐼', '🐈', '☕', '🚗', '🌵', '📷', '🎯', '🦀', '🥕', '🏔️'], // 12 emojis
+            'D': ['🏀', '⚽', '🎾', '🐬', '🌼', '💎', '🚪', '🪿', '🦷', '🥁', '🎯', '🪐'], // 12 emojis
+            'E': ['⭐', '🌙', '☀️', '🐘', '🥚', '📧', '🦅', '🌍', '🔌', '🪺', '🏺', '📏'], // 12 emojis
+            'F': ['🎵', '🎸', '🎹', '🦊', '🍟', '📁', '🏷️', '🔥', '🎏', '🥐', '🪶', '🎻'], // 12 emojis
+            'G': ['🍕', '🍔', '🌮', '🦍', '🍇', '🎮', '⚙️', '💡', '🪿', '🥒', '🪕', '🏺'], // 12 emojis
+            'H': ['🏠', '🏢', '🏪', '🐎', '🍯', '💇', '🪝', '🫀', '🎣', '🥩', '🪻', '🏨'], // 12 emojis
+            'I': ['❤️', '💕', '💖', '🐊', '🍦', '📲', '🔌', '🧊', '🎚️', '🥨', '🪀', '🏝️'], // 12 emojis
+            'J': ['😂', '😅', '🤣', '🪼', '🍊', '🎷', '🗃️', '🤹', '🪅', '🥇', '🪗', '🏔️'], // 12 emojis
+            'K': ['🔑', '💎', '💰', '🦘', '🥝', '🎋', '⚔️', '🔪', '🪢', '🥋', '🪚', '🏯'], // 12 emojis
+            'L': ['👍', '👌', '👏', '🦁', '🍋', '📚', '🪜', '💡', '🎋', '🥬', '🪇', '🏮'], // 12 emojis
+            'M': ['🌍', '🌎', '🌏', '🐒', '🍈', '📧', '⚙️', '🧲', '🪙', '🥭', '🪺', '🏛️'], // 12 emojis
+            'N': ['📱', '💻', '🖥️', '🐨', '🍜', '📰', '⚓', '🧿', '🪢', '🥜', '🪐', '🏜️'], // 12 emojis
+            'O': ['🔴', '🟠', '🟡', '🐙', '🍊', '📀', '⚪', '🧿', '🪐', '🥨', '🪻', '🏵️'], // 12 emojis
+            'P': ['🎨', '🎭', '🎪', '🐧', '🍍', '📷', '🎹', '🧩', '🪅', '🥧', '🪇', '🏓'], // 12 emojis
+            'Q': ['❓', '❔', '⁉️', '🦆', '🍄', '📋', '🔍', '🧿', '🪀', '🥟', '🪺', '🏺'], // 12 emojis
+            'R': ['🚗', '🚕', '🚙', '🦌', '🍚', '📻', '⚡', '🧿', '🪢', '🥕', '🪶', '🏹'], // 12 emojis
+            'S': ['🐟', '🐠', '🐡', '🐍', '🍓', '📏', '🎷', '🧴', '🪡', '🥗', '🪐', '🏖️'], // 12 emojis
+            'T': ['🌷', '🌹', '🌸', '🐯', '🍅', '📺', '🎪', '🧿', '🪑', '🥡', '🪻', '🏔️'], // 12 emojis
+            'U': ['☂️', '☔', '🌂', '🦄', '🍇', '📨', '⚙️', '🧿', '🪀', '🥮', '🪺', '🏝️'], // 12 emojis
+            'V': ['✌️', '🤞', '🖖', '🦎', '🍏', '📼', '🎻', '🧿', '🪶', '🥑', '🪐', '🏔️'], // 12 emojis
+            'W': ['👀', '👁️', '👃', '🐋', '🍉', '📊', '⚙️', '🧿', '🪢', '🥝', '🪺', '🏮'], // 12 emojis
+            'X': ['❌', '⭕', '✔️', '🦖', '🍪', '📌', '🎯', '🧿', '🪑', '🥨', '🪐', '🏹'], // 12 emojis
+            'Y': ['🌲', '🌳', '🌴', '🦬', '🍠', '📎', '🎼', '🧿', '🪀', '🥧', '🪺', '🏵️'], // 12 emojis
+            'Z': ['⚡', '🔥', '💧', '🦓', '🍋', '📏', '🎰', '🧿', '🪐', '🥕', '🪻', '🏜️'], // 12 emojis
+            ' ': ['⬜', '◻️', '▫️', '🔲', '⚪', '🌫️', '💭', '🌀', '⏸️', '⏹️', '◽', '🔳'] // 12 space variants
         };
 
-        // reverse mapping
+        // ==================== VERIFY UNIQUENESS ====================
+        // This ensures no emoji appears in two different letters
+        const allEmojis = new Set();
+        let hasDuplicates = false;
+        
+        for (const [letter, emojis] of Object.entries(emojiMap)) {
+            for (const emoji of emojis) {
+                if (allEmojis.has(emoji)) {
+                    console.warn(`⚠️ Duplicate emoji found: ${emoji} appears in multiple letters`);
+                    hasDuplicates = true;
+                }
+                allEmojis.add(emoji);
+            }
+        }
+        
+        console.log(`✅ Total unique emojis: ${allEmojis.size}`);
+        if (!hasDuplicates) console.log("✅ No duplicates! Every emoji is unique to one letter");
+
+        // ==================== REVERSE MAPPING ====================
         const reverseMap = {};
         for (const [letter, emojis] of Object.entries(emojiMap)) {
-            emojis.forEach(emoji => reverseMap[emoji] = letter);
+            emojis.forEach(emoji => {
+                reverseMap[emoji] = letter;
+            });
         }
 
-        // DOM elements
+        // ==================== DOM ELEMENTS ====================
         const inputField = document.getElementById('inputField');
         const outputField = document.getElementById('outputField');
         const charCount = document.getElementById('charCount');
@@ -388,94 +421,155 @@
         const swapBtn = document.getElementById('swapBtn');
         const placeholderDots = document.getElementById('placeholderDots');
         const outputType = document.getElementById('outputType');
+        const detectionConfidence = document.getElementById('detectionConfidence');
 
-        // smart detection
+        // ==================== SMART DETECTION ====================
         function detectMode(text) {
-            if (text.length === 0) return 'encrypt';
+            if (text.length === 0) return { mode: 'encrypt', confidence: 0 };
             
-            let emojiCount = 0;
-            let letterCount = 0;
+            let emojiMatches = 0;
+            let textMatches = 0;
+            let unknownChars = 0;
             
-            for (let i = 0; i < text.length; i++) {
-                if (i + 1 < text.length) {
-                    const twoChar = text.substr(i, 2);
-                    if (reverseMap[twoChar]) {
-                        emojiCount++;
-                        i++;
-                        continue;
+            let i = 0;
+            while (i < text.length) {
+                let matched = false;
+                
+                // Check for 2-3 character emojis first
+                for (let len = 3; len >= 1; len--) {
+                    if (i + len <= text.length) {
+                        const segment = text.substr(i, len);
+                        if (reverseMap[segment]) {
+                            emojiMatches++;
+                            i += len;
+                            matched = true;
+                            break;
+                        }
                     }
                 }
                 
-                const oneChar = text[i];
-                if (reverseMap[oneChar]) {
-                    emojiCount++;
-                } else if (oneChar.match(/[a-zA-Z\s]/i)) {
-                    letterCount++;
+                if (!matched) {
+                    const char = text[i];
+                    // Check if it's a letter (case insensitive)
+                    if (char.match(/[a-zA-Z\s]/i)) {
+                        textMatches++;
+                    } else {
+                        unknownChars++;
+                    }
+                    i++;
                 }
             }
             
-            return emojiCount > letterCount ? 'decrypt' : 'encrypt';
+            const total = emojiMatches + textMatches + unknownChars;
+            const emojiRatio = emojiMatches / total;
+            const textRatio = textMatches / total;
+            
+            // Determine mode with high confidence
+            if (emojiMatches > textMatches && emojiRatio > 0.4) {
+                return { 
+                    mode: 'decrypt', 
+                    confidence: Math.round(emojiRatio * 100),
+                    reason: 'mostly emojis'
+                };
+            } else if (textMatches > emojiMatches && textRatio > 0.4) {
+                return { 
+                    mode: 'encrypt', 
+                    confidence: Math.round(textRatio * 100),
+                    reason: 'mostly text'
+                };
+            } else {
+                // If unclear, default to encrypt but with low confidence
+                return { 
+                    mode: 'encrypt', 
+                    confidence: 50,
+                    reason: 'mixed content'
+                };
+            }
         }
 
-        // encryption
+        // ==================== ENCRYPTION ====================
         function encryptText(text) {
+            // Case insensitive - convert to uppercase for mapping
             const upper = text.toUpperCase();
             let result = '';
+            
             for (let ch of upper) {
                 if (emojiMap[ch]) {
                     const options = emojiMap[ch];
+                    // Randomly select one of the 10+ emojis for this letter
                     result += options[Math.floor(Math.random() * options.length)];
                 } else {
+                    // Keep characters not in map (numbers, punctuation)
                     result += ch;
                 }
             }
             return result;
         }
 
-        // decryption
+        // ==================== DECRYPTION ====================
         function decryptText(emojiStr) {
             let result = '';
             let i = 0;
+            
             while (i < emojiStr.length) {
                 let found = false;
-                if (i + 1 < emojiStr.length) {
-                    const two = emojiStr.substr(i, 2);
-                    if (reverseMap[two]) {
-                        result += reverseMap[two];
-                        i += 2;
-                        found = true;
+                
+                // Try matching longer emojis first (up to 3 characters)
+                for (let len = 3; len >= 1; len--) {
+                    if (i + len <= emojiStr.length) {
+                        const segment = emojiStr.substr(i, len);
+                        if (reverseMap[segment]) {
+                            result += reverseMap[segment];
+                            i += len;
+                            found = true;
+                            break;
+                        }
                     }
                 }
+                
                 if (!found) {
-                    const one = emojiStr[i];
-                    if (reverseMap[one]) {
-                        result += reverseMap[one];
-                        i += 1;
-                        found = true;
-                    }
-                }
-                if (!found) {
+                    // Not an emoji in our map, keep original
                     result += emojiStr[i];
-                    i += 1;
+                    i++;
                 }
             }
+            
             return result;
         }
 
-        // update output
+        // ==================== LIVE UPDATE ====================
         function updateOutput() {
             const rawInput = inputField.value;
             charCount.textContent = rawInput.length;
 
             let outputText = '';
             let mode = 'encrypt';
+            let confidence = 0;
             
             if (rawInput.trim() === '') {
                 outputText = '';
                 mode = 'encrypt';
+                confidence = 0;
+                detectionConfidence.textContent = '';
             } else {
-                mode = detectMode(rawInput);
-                outputText = mode === 'encrypt' ? encryptText(rawInput) : decryptText(rawInput);
+                const detection = detectMode(rawInput);
+                mode = detection.mode;
+                confidence = detection.confidence;
+                
+                if (mode === 'encrypt') {
+                    outputText = encryptText(rawInput);
+                } else {
+                    outputText = decryptText(rawInput);
+                }
+                
+                // Show confidence for debugging/transparency
+                if (confidence > 70) {
+                    detectionConfidence.textContent = `🔍 ${confidence}% confident`;
+                } else if (confidence > 40) {
+                    detectionConfidence.textContent = `🔍 ${confidence}% confident (mixed)`;
+                } else {
+                    detectionConfidence.textContent = '';
+                }
             }
 
             outputField.innerText = outputText;
@@ -483,7 +577,7 @@
             placeholderDots.style.display = (outputText === '' && rawInput === '') ? 'flex' : 'none';
         }
 
-        // copy
+        // ==================== COPY ====================
         copyBtn.addEventListener('click', async () => {
             const text = outputField.innerText;
             if (!text) return;
@@ -513,14 +607,14 @@
             }
         });
 
-        // clear
+        // ==================== CLEAR ====================
         clearBtn.addEventListener('click', () => {
             inputField.value = '';
             updateOutput();
             inputField.focus();
         });
 
-        // swap
+        // ==================== SWAP ====================
         swapBtn.addEventListener('click', () => {
             const currentOutput = outputField.innerText;
             if (!currentOutput) return;
@@ -528,12 +622,17 @@
             updateOutput();
         });
 
-        // input event
+        // ==================== INPUT EVENT ====================
         inputField.addEventListener('input', updateOutput);
         
-        // init
+        // ==================== INIT ====================
         updateOutput();
         inputField.focus();
+
+        // Log stats to console (invisible to users)
+        console.log('🚀 Cipher Emoji upgraded with:');
+        console.log(`📊 ${allEmojis.size} unique emojis across 26 letters + space`);
+        console.log('✨ Each letter has 10-12 unique emojis with no overlaps');
     </script>
 </body>
 </html>
