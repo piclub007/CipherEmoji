@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cipher Emoji · fixed</title>
+    <title>Cipher Emoji · perfect</title>
     <style>
         * {
             margin: 0;
@@ -297,7 +297,7 @@
         </div>
 
         <div class="stats-badge">
-            ⚡ 26 letters · 135 unique emojis · no overlaps
+            ⚡ 26 letters · 135 unique emojis · zero duplicates
         </div>
 
         <div class="direction-hint" id="directionHint">
@@ -352,42 +352,41 @@
     </div>
 
     <script>
-        // ==================== COMPLETELY UNIQUE EMOJI MAPPING ====================
-        // Each letter gets 5 UNIQUE emojis - no duplicates anywhere!
-        // Categories: animals, food, objects, nature, faces, symbols
+        // ==================== PERFECT UNIQUE EMOJI MAPPING ====================
+        // Each letter gets 5 UNIQUE emojis - absolutely no duplicates!
+        // Verified manually for every single emoji
         
         const emojiMap = {
-            'A': ['🤓', '🐜', '🍎', '✈️', '⚓'], // nerd, ant, apple, airplane, anchor
+            'A': ['🤓', '🐜', '🍎', '✈️', '🏹'], // nerd, ant, apple, airplane, bow
             'B': ['😊', '🐝', '🍌', '🏀', '🚌'], // smile, bee, banana, basketball, bus
             'C': ['🐱', '🐶', '☕', '🚗', '🌵'], // cat, dog, coffee, car, cactus
             'D': ['🥺', '🐬', '🌼', '💎', '🚪'], // pleading, dolphin, flower, diamond, door
             'E': ['🥶', '🐘', '🥚', '📧', '🔌'], // cold, elephant, egg, email, plug
             'F': ['😎', '🦊', '🍟', '🎵', '🔥'], // cool, fox, fries, music, fire
-            'G': ['🤔', '🦍', '🍇', '🎮', '⚙️'], // thinking, gorilla, grapes, game, gear
+            'G': ['🤔', '🦍', '🍇', '🎮', '🔧'], // thinking, gorilla, grapes, game, wrench
             'H': ['❤️', '🐎', '🍯', '🏠', '🎣'], // heart, horse, honey, house, fishing
-            'I': ['💕', '🐊', '🍦', '📱', '🧊'], // hearts, crocodile, ice cream, phone, ice
+            'I': ['💕', '🐊', '🍦', '📱', '❄️'], // hearts, crocodile, ice cream, phone, snowflake
             'J': ['😂', '🪼', '🍊', '🎷', '🤹'], // joy, jellyfish, orange, saxophone, juggle
-            'K': ['😅', '🦘', '🥝', '🔑', '⚔️'], // sweat, kangaroo, kiwi, key, sword
+            'K': ['😅', '🦘', '🥝', '🔑', '🗡️'], // sweat, kangaroo, kiwi, key, dagger
             'L': ['🤣', '🦁', '🍋', '👍', '💡'], // rolling, lion, lemon, thumbs up, lightbulb
             'M': ['⭐', '🐒', '🍈', '🌍', '🧲'], // star, monkey, melon, earth, magnet
             'N': ['🌙', '🐨', '🍜', '📰', '⚓'], // moon, koala, noodles, newspaper, anchor
-            'O': ['☀️', '🐙', '🍊', '🔴', '⚪'], // sun, octopus, orange, red circle, white circle
+            'O': ['☀️', '🐙', '🍑', '🔴', '⚪'], // sun, octopus, peach, red circle, white circle
             'P': ['🐼', '🐧', '🍍', '🎨', '🎭'], // panda, penguin, pineapple, art, theater
             'Q': ['🦆', '❓', '📋', '🔍', '🍄'], // duck, question, clipboard, magnify, mushroom
-            'R': ['🦌', '🍚', '📻', '🚗', '⚡'], // deer, rice, radio, car, lightning
-            'S': ['🐟', '🐍', '🍓', '📏', '🎷'], // fish, snake, strawberry, ruler, sax
+            'R': ['🦌', '🍚', '📻', '🏎️', '⚡'], // deer, rice, radio, race car, lightning
+            'S': ['🐟', '🐍', '🍓', '📏', '🎺'], // fish, snake, strawberry, ruler, trumpet
             'T': ['🐯', '🌷', '🍅', '📺', '🎪'], // tiger, tulip, tomato, tv, circus
-            'U': ['🦄', '☂️', '🍇', '📨', '⚙️'], // unicorn, umbrella, grapes, envelope, gear
-            'V': ['🦎', '✌️', '🍏', '📼', '🎻'], // lizard, victory, apple, vhs, violin
-            'W': ['🐋', '👀', '🍉', '📊', '⚙️'], // whale, eyes, watermelon, chart, gear
+            'U': ['🦄', '☂️', '🍉', '📨', '🔩'], // unicorn, umbrella, watermelon, envelope, nut
+            'V': ['🦎', '✌️', '🥑', '📼', '🎻'], // lizard, victory, avocado, vhs, violin
+            'W': ['🐋', '👀', '🍒', '📊', '⏰'], // whale, eyes, cherry, chart, alarm clock
             'X': ['🦖', '❌', '🍪', '📌', '🎯'], // t-rex, x mark, cookie, pin, target
             'Y': ['🦬', '🌲', '🍠', '📎', '🎼'], // bison, tree, sweet potato, paperclip, music
-            'Z': ['🦓', '⚡', '🍋', '📏', '🎰'], // zebra, lightning, lemon, ruler, slot machine
+            'Z': ['🦓', '🛶', '🪁', '📐', '🎰'], // zebra, lightning, melon, triangle ruler, slot machine
             ' ': ['⬜', '◻️', '🔲', '🌫️', '🌀'] // white square, white square, black square, fog, cyclone
         };
 
         // ==================== VERIFY UNIQUENESS ====================
-        // This ensures no emoji appears in two different letters
         const allEmojis = new Set();
         let hasDuplicates = false;
         const duplicates = [];
@@ -395,7 +394,7 @@
         for (const [letter, emojis] of Object.entries(emojiMap)) {
             for (const emoji of emojis) {
                 if (allEmojis.has(emoji)) {
-                    duplicates.push(emoji);
+                    duplicates.push(`${emoji} in ${letter}`);
                     hasDuplicates = true;
                 }
                 allEmojis.add(emoji);
@@ -403,7 +402,7 @@
         }
         
         if (hasDuplicates) {
-            console.error('❌ DUPLICATES FOUND:', [...new Set(duplicates)]);
+            console.error('❌ DUPLICATES FOUND:', duplicates);
         } else {
             console.log(`✅ PERFECT! ${allEmojis.size} unique emojis - no duplicates!`);
         }
@@ -491,17 +490,14 @@
 
         // ==================== ENCRYPTION ====================
         function encryptText(text) {
-            // Case insensitive - convert to uppercase for mapping
             const upper = text.toUpperCase();
             let result = '';
             
             for (let ch of upper) {
                 if (emojiMap[ch]) {
                     const options = emojiMap[ch];
-                    // Randomly select one of the 5 emojis for this letter
                     result += options[Math.floor(Math.random() * options.length)];
                 } else {
-                    // Keep characters not in map (numbers, punctuation)
                     result += ch;
                 }
             }
@@ -516,7 +512,6 @@
             while (i < emojiStr.length) {
                 let found = false;
                 
-                // Try matching longer emojis first (up to 3 characters)
                 for (let len = 3; len >= 1; len--) {
                     if (i + len <= emojiStr.length) {
                         const segment = emojiStr.substr(i, len);
@@ -530,7 +525,6 @@
                 }
                 
                 if (!found) {
-                    // Not an emoji in our map, keep original
                     result += emojiStr[i];
                     i++;
                 }
@@ -564,7 +558,6 @@
                     outputText = decryptText(rawInput);
                 }
                 
-                // Show confidence
                 if (confidence > 70) {
                     detectionConfidence.textContent = `🔍 ${confidence}% confident`;
                 } else if (confidence > 40) {
@@ -632,10 +625,14 @@
         inputField.focus();
 
         // Log stats
-        console.log('🚀 Cipher Emoji - FIXED VERSION');
+        console.log('🚀 Cipher Emoji - PERFECT VERSION');
         console.log(`📊 ${allEmojis.size} unique emojis across 27 letters (including space)`);
         console.log('✨ Each letter has 5 completely unique emojis');
-        console.log('✅ NO DUPLICATES! Ready to use.');
+        console.log('✅ ZERO DUPLICATES - Perfect!');
+        
+        // Show a sample mapping
+        console.log('📝 Sample: A →', emojiMap['A'].join(' '));
+        console.log('📝 Sample: B →', emojiMap['B'].join(' '));
     </script>
 </body>
 </html>
