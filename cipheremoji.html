@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Cipher Emoji</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cipher Emoji · app</title>
     <style>
         * {
             margin: 0;
@@ -28,6 +28,24 @@
             padding: 1rem;
         }
 
+        /* back button */
+        .back-link {
+            margin-bottom: 1rem;
+        }
+
+        .back-link a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .back-link a:hover {
+            color: #121212;
+        }
+
         /* title */
         .app-title {
             font-size: 1.8rem;
@@ -43,12 +61,21 @@
             font-size: 1.4rem;
         }
 
+        /* direction hint */
+        .direction-hint {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
         /* cards */
         .card {
             background: #ffffff;
             border-radius: 1.5rem;
             padding: 1.2rem;
             margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
 
         .label-row {
@@ -101,15 +128,13 @@
             word-break: break-all;
             user-select: all;
             -webkit-user-select: all;
-            -moz-user-select: all;
-            -ms-user-select: all;
             cursor: text;
             display: block;
-            padding-right: 3.5rem; /* space for copy button */
+            padding-right: 3.5rem;
         }
 
         .output-text:empty::before {
-            content: "✨ emojis or text appear here";
+            content: "✨ result appears here";
             color: #ccc;
             font-size: 1.2rem;
             user-select: none;
@@ -133,7 +158,6 @@
             cursor: pointer;
             transition: all 0.15s;
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            -webkit-tap-highlight-color: transparent;
         }
 
         .copy-btn:hover {
@@ -150,7 +174,7 @@
             color: #2e7d32;
         }
 
-        /* live preview pills */
+        /* live preview */
         .live-preview {
             display: flex;
             align-items: center;
@@ -193,7 +217,7 @@
             margin-left: auto;
         }
 
-        /* empty state animation */
+        /* placeholder dots */
         .placeholder-dots {
             display: flex;
             gap: 0.75rem;
@@ -236,7 +260,6 @@
             display: flex;
             align-items: center;
             gap: 0.3rem;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .action-btn:hover {
@@ -250,54 +273,40 @@
                 background: #f5f5f5;
             }
         }
-
-        /* responsive spacing */
-        @media (max-width: 380px) {
-            .cipher {
-                padding: 0.5rem;
-            }
-            .card {
-                padding: 1rem;
-            }
-        }
-
-        /* direction hint */
-        .direction-hint {
-            text-align: center;
-            margin: -0.5rem 0 1rem 0;
-            font-size: 0.8rem;
-            color: #aaa;
-        }
     </style>
 </head>
 <body>
     <div class="cipher">
+        <!-- back link -->
+        <div class="back-link">
+            <a href="index.html">← back to home</a>
+        </div>
+
         <!-- app title -->
         <div class="app-title">
             cipher emoji <span>✨</span>
         </div>
 
-        <!-- direction hint - automatically toggles -->
+        <!-- direction hint -->
         <div class="direction-hint" id="directionHint">
-            typing text → emojis · typing emojis → text
+            text → emojis · emojis → text
         </div>
 
         <!-- input card -->
         <div class="card">
             <div class="label-row">
                 <span>input</span>
-                <span class="char-count" id="charCount">0 characters</span>
+                <span class="char-count" id="charCount">0</span>
             </div>
             <div class="input-area">
                 <textarea id="inputField" placeholder="type text or emojis..." spellcheck="false"></textarea>
             </div>
             
-            <!-- live pulse indicator -->
             <div class="live-preview">
                 <div class="dot-pulse">
                     <span></span><span></span><span></span>
                 </div>
-                <span>live translation</span>
+                <span>live</span>
             </div>
         </div>
 
@@ -314,7 +323,6 @@
                 </button>
             </div>
             
-            <!-- subtle placeholder animation -->
             <div class="placeholder-dots" id="placeholderDots">
                 <span>🤓</span>
                 <span>🥺</span>
@@ -334,229 +342,198 @@
     </div>
 
     <script>
-        (function() {
-            // emoji mapping
-            const emojiMap = {
-                'A': ['🤓', '🥺', '🥶'],
-                'B': ['😊', '😎', '🤔'],
-                'C': ['🐱', '🐶', '🐼'],
-                'D': ['🏀', '⚽', '🎾'],
-                'E': ['⭐', '🌙', '☀️'],
-                'F': ['🎵', '🎸', '🎹'],
-                'G': ['🍕', '🍔', '🌮'],
-                'H': ['🏠', '🏢', '🏪'],
-                'I': ['❤️', '💕', '💖'],
-                'J': ['😂', '😅', '🤣'],
-                'K': ['🔑', '💎', '💰'],
-                'L': ['👍', '👌', '👏'],
-                'M': ['🌍', '🌎', '🌏'],
-                'N': ['📱', '💻', '🖥️'],
-                'O': ['🔴', '🟠', '🟡'],
-                'P': ['🎨', '🎭', '🎪'],
-                'Q': ['❓', '❔', '⁉️'],
-                'R': ['🚗', '🚕', '🚙'],
-                'S': ['🐟', '🐠', '🐡'],
-                'T': ['🌷', '🌹', '🌸'],
-                'U': ['☂️', '☔', '🌂'],
-                'V': ['✌️', '🤞', '🖖'],
-                'W': ['👀', '👁️', '👃'],
-                'X': ['❌', '⭕', '✔️'],
-                'Y': ['🌲', '🌳', '🌴'],
-                'Z': ['⚡', '🔥', '💧'],
-                ' ': ['⬜']
-            };
+        // emoji mapping
+        const emojiMap = {
+            'A': ['🤓', '🥺', '🥶'],
+            'B': ['😊', '😎', '🤔'],
+            'C': ['🐱', '🐶', '🐼'],
+            'D': ['🏀', '⚽', '🎾'],
+            'E': ['⭐', '🌙', '☀️'],
+            'F': ['🎵', '🎸', '🎹'],
+            'G': ['🍕', '🍔', '🌮'],
+            'H': ['🏠', '🏢', '🏪'],
+            'I': ['❤️', '💕', '💖'],
+            'J': ['😂', '😅', '🤣'],
+            'K': ['🔑', '💎', '💰'],
+            'L': ['👍', '👌', '👏'],
+            'M': ['🌍', '🌎', '🌏'],
+            'N': ['📱', '💻', '🖥️'],
+            'O': ['🔴', '🟠', '🟡'],
+            'P': ['🎨', '🎭', '🎪'],
+            'Q': ['❓', '❔', '⁉️'],
+            'R': ['🚗', '🚕', '🚙'],
+            'S': ['🐟', '🐠', '🐡'],
+            'T': ['🌷', '🌹', '🌸'],
+            'U': ['☂️', '☔', '🌂'],
+            'V': ['✌️', '🤞', '🖖'],
+            'W': ['👀', '👁️', '👃'],
+            'X': ['❌', '⭕', '✔️'],
+            'Y': ['🌲', '🌳', '🌴'],
+            'Z': ['⚡', '🔥', '💧'],
+            ' ': ['⬜']
+        };
 
-            // reverse mapping for decryption
-            const reverseMap = {};
-            for (const [letter, emojis] of Object.entries(emojiMap)) {
-                emojis.forEach(emoji => reverseMap[emoji] = letter);
-            }
+        // reverse mapping
+        const reverseMap = {};
+        for (const [letter, emojis] of Object.entries(emojiMap)) {
+            emojis.forEach(emoji => reverseMap[emoji] = letter);
+        }
 
-            // DOM elements
-            const inputField = document.getElementById('inputField');
-            const outputField = document.getElementById('outputField');
-            const charCount = document.getElementById('charCount');
-            const copyBtn = document.getElementById('copyBtn');
-            const clearBtn = document.getElementById('clearBtn');
-            const swapBtn = document.getElementById('swapBtn');
-            const placeholderDots = document.getElementById('placeholderDots');
-            const outputType = document.getElementById('outputType');
-            const directionHint = document.getElementById('directionHint');
+        // DOM elements
+        const inputField = document.getElementById('inputField');
+        const outputField = document.getElementById('outputField');
+        const charCount = document.getElementById('charCount');
+        const copyBtn = document.getElementById('copyBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const swapBtn = document.getElementById('swapBtn');
+        const placeholderDots = document.getElementById('placeholderDots');
+        const outputType = document.getElementById('outputType');
 
-            // smart detection: if input contains more emojis than letters, decrypt. otherwise encrypt.
-            function detectMode(text) {
-                if (text.length === 0) return 'encrypt'; // default
-                
-                // count emojis (characters that exist in reverseMap)
-                let emojiCount = 0;
-                let letterCount = 0;
-                
-                for (let i = 0; i < text.length; i++) {
-                    // check for 2-char emojis
-                    if (i + 1 < text.length) {
-                        const twoChar = text.substr(i, 2);
-                        if (reverseMap[twoChar]) {
-                            emojiCount++;
-                            i++; // skip next char
-                            continue;
-                        }
-                    }
-                    
-                    const oneChar = text[i];
-                    if (reverseMap[oneChar]) {
-                        emojiCount++;
-                    } else if (oneChar.match(/[a-zA-Z\s]/i)) {
-                        letterCount++;
-                    }
-                }
-                
-                // if more emojis than letters, decrypt mode
-                return emojiCount > letterCount ? 'decrypt' : 'encrypt';
-            }
-
-            // encryption (random emoji)
-            function encryptText(text) {
-                const upper = text.toUpperCase();
-                let result = '';
-                for (let ch of upper) {
-                    if (emojiMap[ch]) {
-                        const options = emojiMap[ch];
-                        result += options[Math.floor(Math.random() * options.length)];
-                    } else {
-                        result += ch; // keep unmapped chars
-                    }
-                }
-                return result;
-            }
-
-            // decryption
-            function decryptText(emojiStr) {
-                let result = '';
-                let i = 0;
-                while (i < emojiStr.length) {
-                    let found = false;
-                    // try 2-char emoji
-                    if (i + 1 < emojiStr.length) {
-                        const two = emojiStr.substr(i, 2);
-                        if (reverseMap[two]) {
-                            result += reverseMap[two];
-                            i += 2;
-                            found = true;
-                        }
-                    }
-                    // try 1-char emoji
-                    if (!found) {
-                        const one = emojiStr[i];
-                        if (reverseMap[one]) {
-                            result += reverseMap[one];
-                            i += 1;
-                            found = true;
-                        }
-                    }
-                    if (!found) {
-                        result += emojiStr[i];
-                        i += 1;
-                    }
-                }
-                return result;
-            }
-
-            // live update with smart mode detection
-            function updateOutput() {
-                const rawInput = inputField.value;
-                charCount.textContent = rawInput.length + ' character' + (rawInput.length !== 1 ? 's' : '');
-
-                let outputText = '';
-                let mode = 'encrypt';
-                
-                if (rawInput.trim() === '') {
-                    outputText = '';
-                    mode = 'encrypt';
-                } else {
-                    mode = detectMode(rawInput);
-                    if (mode === 'encrypt') {
-                        outputText = encryptText(rawInput);
-                    } else {
-                        outputText = decryptText(rawInput);
-                    }
-                }
-
-                outputField.innerText = outputText;
-                
-                // update UI based on mode
-                if (mode === 'encrypt') {
-                    outputType.innerHTML = '🔒 emojis';
-                    directionHint.style.opacity = '0.7';
-                } else {
-                    outputType.innerHTML = '🔓 text';
-                    directionHint.style.opacity = '0.7';
-                }
-                
-                // show/hide placeholder dots
-                placeholderDots.style.display = (outputText === '' && rawInput === '') ? 'flex' : 'none';
-            }
-
-            // simple copy
-            copyBtn.addEventListener('click', async () => {
-                const text = outputField.innerText;
-                if (!text) return;
-                
-                try {
-                    await navigator.clipboard.writeText(text);
-                    copyBtn.classList.add('copied');
-                    copyBtn.textContent = '✓';
-                    
-                    setTimeout(() => {
-                        copyBtn.classList.remove('copied');
-                        copyBtn.textContent = '📋';
-                    }, 1500);
-                } catch (err) {
-                    // fallback
-                    const textarea = document.createElement('textarea');
-                    textarea.value = text;
-                    document.body.appendChild(textarea);
-                    textarea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textarea);
-                    
-                    copyBtn.classList.add('copied');
-                    copyBtn.textContent = '✓';
-                    setTimeout(() => {
-                        copyBtn.classList.remove('copied');
-                        copyBtn.textContent = '📋';
-                    }, 1500);
-                }
-            });
-
-            // clear
-            clearBtn.addEventListener('click', () => {
-                inputField.value = '';
-                updateOutput();
-                inputField.focus();
-            });
-
-            // swap: put output into input
-            swapBtn.addEventListener('click', () => {
-                const currentOutput = outputField.innerText;
-                if (!currentOutput) return;
-                inputField.value = currentOutput;
-                updateOutput();
-            });
-
-            // input event for live updates
-            inputField.addEventListener('input', updateOutput);
+        // smart detection
+        function detectMode(text) {
+            if (text.length === 0) return 'encrypt';
             
-            // initial update
+            let emojiCount = 0;
+            let letterCount = 0;
+            
+            for (let i = 0; i < text.length; i++) {
+                if (i + 1 < text.length) {
+                    const twoChar = text.substr(i, 2);
+                    if (reverseMap[twoChar]) {
+                        emojiCount++;
+                        i++;
+                        continue;
+                    }
+                }
+                
+                const oneChar = text[i];
+                if (reverseMap[oneChar]) {
+                    emojiCount++;
+                } else if (oneChar.match(/[a-zA-Z\s]/i)) {
+                    letterCount++;
+                }
+            }
+            
+            return emojiCount > letterCount ? 'decrypt' : 'encrypt';
+        }
+
+        // encryption
+        function encryptText(text) {
+            const upper = text.toUpperCase();
+            let result = '';
+            for (let ch of upper) {
+                if (emojiMap[ch]) {
+                    const options = emojiMap[ch];
+                    result += options[Math.floor(Math.random() * options.length)];
+                } else {
+                    result += ch;
+                }
+            }
+            return result;
+        }
+
+        // decryption
+        function decryptText(emojiStr) {
+            let result = '';
+            let i = 0;
+            while (i < emojiStr.length) {
+                let found = false;
+                if (i + 1 < emojiStr.length) {
+                    const two = emojiStr.substr(i, 2);
+                    if (reverseMap[two]) {
+                        result += reverseMap[two];
+                        i += 2;
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    const one = emojiStr[i];
+                    if (reverseMap[one]) {
+                        result += reverseMap[one];
+                        i += 1;
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    result += emojiStr[i];
+                    i += 1;
+                }
+            }
+            return result;
+        }
+
+        // update output
+        function updateOutput() {
+            const rawInput = inputField.value;
+            charCount.textContent = rawInput.length;
+
+            let outputText = '';
+            let mode = 'encrypt';
+            
+            if (rawInput.trim() === '') {
+                outputText = '';
+                mode = 'encrypt';
+            } else {
+                mode = detectMode(rawInput);
+                outputText = mode === 'encrypt' ? encryptText(rawInput) : decryptText(rawInput);
+            }
+
+            outputField.innerText = outputText;
+            outputType.innerHTML = mode === 'encrypt' ? '🔒 emojis' : '🔓 text';
+            placeholderDots.style.display = (outputText === '' && rawInput === '') ? 'flex' : 'none';
+        }
+
+        // copy
+        copyBtn.addEventListener('click', async () => {
+            const text = outputField.innerText;
+            if (!text) return;
+            
+            try {
+                await navigator.clipboard.writeText(text);
+                copyBtn.classList.add('copied');
+                copyBtn.textContent = '✓';
+                setTimeout(() => {
+                    copyBtn.classList.remove('copied');
+                    copyBtn.textContent = '📋';
+                }, 1500);
+            } catch (err) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                
+                copyBtn.classList.add('copied');
+                copyBtn.textContent = '✓';
+                setTimeout(() => {
+                    copyBtn.classList.remove('copied');
+                    copyBtn.textContent = '📋';
+                }, 1500);
+            }
+        });
+
+        // clear
+        clearBtn.addEventListener('click', () => {
+            inputField.value = '';
             updateOutput();
             inputField.focus();
+        });
 
-            // responsive touch handling
-            if ('ontouchstart' in window) {
-                document.querySelectorAll('.copy-btn, .action-btn').forEach(btn => {
-                    btn.style.cursor = 'pointer';
-                });
-            }
-        })();
+        // swap
+        swapBtn.addEventListener('click', () => {
+            const currentOutput = outputField.innerText;
+            if (!currentOutput) return;
+            inputField.value = currentOutput;
+            updateOutput();
+        });
+
+        // input event
+        inputField.addEventListener('input', updateOutput);
+        
+        // init
+        updateOutput();
+        inputField.focus();
     </script>
 </body>
 </html>
